@@ -1,0 +1,38 @@
+name: NBML Validation
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[yaml]
+      - name: Validate NBML
+        run: |
+          python - << 'PY'
+import os
+from tooling.helix_val import load_nbml, evaluate
+fails = []
+for base in ("omu","datasets","."):
+    for dp,_,fs in os.walk(base):
+        for fn in fs:
+            if "nbml" in fn and fn.endswith((".yaml",".yml",".json")):
+                p = os.path.join(dp, fn)
+                try:
+                    res = evaluate(load_nbml(p))
+                    if res["total"] < 70.0 or not all(res[k]["ok"] for k in ("structure_score","callback_score","arc_score")):
+                        fails.append((p, res["total"]))
+                except Exception:
+                    fails.append((p, 0))
+if fails:
+    print("Validation failures:"); [print(" -", f) for f in fails]; exit(1)
+print("All NBML validated.")
+PY

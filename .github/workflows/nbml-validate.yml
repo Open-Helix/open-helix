@@ -9,65 +9,82 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install
+      - name: Show repo tree
+        run: |
+          pwd
+          python --version
+          ls -la
+          find . -maxdepth 3 -type f | sort
+
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml
+
+      - name: Import validator smoke test
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          python - <<'PY'
+          import sys, os
+          print("sys.path:", sys.path)
+          try:
+              import tooling.helix_val as hv
+              print("Imported tooling.helix_val OK")
+          except Exception as e:
+              print("IMPORT ERROR:", e)
+              raise SystemExit(1)
+          PY
 
       - name: Validate NBML
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           python - <<'PY'
-          import os, json
-          from importlib import import_module
-
-          # Import the validator
-          try:
-              hv = import_module("tooling.helix_val")
-          except Exception as e:
-              print("ERROR: Couldn't import tooling.helix_val:", e)
-              raise
+          import os
+          import tooling.helix_val as hv
 
           def nbml_files(root):
-              for base in ("omu","datasets","."):
+              for base in ("omu", "datasets", "."):
                   if not os.path.isdir(base):
                       continue
                   for dp,_,fs in os.walk(base):
                       for fn in fs:
-                          if "nbml" in fn and fn.endswith((".yaml",".yml",".json")):
+                          low = fn.lower()
+                          if "nbml" in low and low.endswith((".yaml",".yml",".json")):
                               yield os.path.join(dp, fn)
 
+          found = False
           fails = []
-          any_found = False
           for path in sorted(nbml_files(".")):
-              any_found = True
+              found = True
               try:
                   doc = hv.load_nbml(path)
                   res = hv.evaluate(doc)
-                  print(f"[NBML] {path} :: TOTAL={res['total']} ::",
-                        "struct" if res['structure_score']['ok'] else "STRUCT_FAIL",
-                        "callbacks" if res['callback_score']['ok'] else "CALLBACK_FAIL",
-                        "arcs" if res['arc_score']['ok'] else "ARC_FAIL")
+                  print(f"[NBML] {path} :: TOTAL={res['total']} :: "
+                        f"struct={'OK' if res['structure_score']['ok'] else 'FAIL'} "
+                        f"callbacks={'OK' if res['callback_score']['ok'] else 'FAIL'} "
+                        f"arcs={'OK' if res['arc_score']['ok'] else 'FAIL'}")
                   if res["total"] < 70.0 or not all(res[k]["ok"] for k in ("structure_score","callback_score","arc_score")):
                       fails.append((path, res))
               except Exception as e:
                   print(f"[NBML] {path} :: EXCEPTION :: {e}")
                   fails.append((path, {"error": str(e)}))
 
-          if not any_found:
-              print("NOTE: No *.nbml.{yaml,json} files found. (That's okay, just informational.)")
+          if not found:
+              print("NOTE: No NBML files found (.nbml.yaml/.json). Succeeding.")
+              raise SystemExit(0)
 
           if fails:
               print("\nValidation failures:")
               for path, res in fails:
                   if isinstance(res, dict) and "total" in res:
                       print(f" - {path} :: TOTAL={res['total']}")
-                      # Show the first few errors/warnings to be helpful
                       for e in res.get("errors", [])[:5]:
                           print("   error:", e)
                       for w in res.get("warnings", [])[:3]:

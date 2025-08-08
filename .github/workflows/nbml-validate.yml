@@ -19,26 +19,62 @@ jobs:
           pip install pyyaml
 
       - name: Validate NBML
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           python - <<'PY'
-          import os
-          from tooling.helix_val import load_nbml, evaluate
+          import os, json
+          from importlib import import_module
+
+          # Import the validator
+          try:
+              hv = import_module("tooling.helix_val")
+          except Exception as e:
+              print("ERROR: Couldn't import tooling.helix_val:", e)
+              raise
+
+          def nbml_files(root):
+              for base in ("omu","datasets","."):
+                  if not os.path.isdir(base):
+                      continue
+                  for dp,_,fs in os.walk(base):
+                      for fn in fs:
+                          if "nbml" in fn and fn.endswith((".yaml",".yml",".json")):
+                              yield os.path.join(dp, fn)
+
           fails = []
-          for base in ("omu","datasets","."):
-              for dp,_,fs in os.walk(base):
-                  for fn in fs:
-                      if "nbml" in fn and fn.endswith((".yaml",".yml",".json")):
-                          p = os.path.join(dp, fn)
-                          try:
-                              res = evaluate(load_nbml(p))
-                              if res["total"] < 70.0 or not all(res[k]["ok"] for k in ("structure_score","callback_score","arc_score")):
-                                  fails.append((p, res["total"]))
-                          except Exception:
-                              fails.append((p, 0))
+          any_found = False
+          for path in sorted(nbml_files(".")):
+              any_found = True
+              try:
+                  doc = hv.load_nbml(path)
+                  res = hv.evaluate(doc)
+                  print(f"[NBML] {path} :: TOTAL={res['total']} ::",
+                        "struct" if res['structure_score']['ok'] else "STRUCT_FAIL",
+                        "callbacks" if res['callback_score']['ok'] else "CALLBACK_FAIL",
+                        "arcs" if res['arc_score']['ok'] else "ARC_FAIL")
+                  if res["total"] < 70.0 or not all(res[k]["ok"] for k in ("structure_score","callback_score","arc_score")):
+                      fails.append((path, res))
+              except Exception as e:
+                  print(f"[NBML] {path} :: EXCEPTION :: {e}")
+                  fails.append((path, {"error": str(e)}))
+
+          if not any_found:
+              print("NOTE: No *.nbml.{yaml,json} files found. (That's okay, just informational.)")
+
           if fails:
-              print("Validation failures:")
-              for f in fails:
-                  print(" -", f)
-              exit(1)
+              print("\nValidation failures:")
+              for path, res in fails:
+                  if isinstance(res, dict) and "total" in res:
+                      print(f" - {path} :: TOTAL={res['total']}")
+                      # Show the first few errors/warnings to be helpful
+                      for e in res.get("errors", [])[:5]:
+                          print("   error:", e)
+                      for w in res.get("warnings", [])[:3]:
+                          print("   warn :", w)
+                  else:
+                      print(f" - {path} :: {res}")
+              raise SystemExit(1)
+
           print("All NBML validated.")
           PY

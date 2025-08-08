@@ -1,0 +1,52 @@
+version: NBML-0.2
+work_id: "OMU-Sherlock-EP01"
+logline: "A consulting detective decodes human and statistical signals to expose hidden crimes."
+genre: "Detective"
+beats:
+  - id: B1
+    label: "Ignition"
+    goal: "Accept a baffling case"
+    conflict: "Too few facts"
+    stakes: "Client reputation"
+    callbacks: []
+  - id: B2
+    label: "Constraint Setup"
+    goal: "Define the rules"
+    conflict: "Red herrings everywhere"
+    stakes: "Lose credibility"
+    callbacks: ["B1"]
+  - id: B3
+    label: "Pattern Glimpse"
+    goal: "Find a signal"
+    conflict: "Noise dominates"
+    stakes: "Wrong suspect risk"
+    callbacks: ["B2"]
+  - id: B4
+    label: "Pressure Mounts"
+    goal: "Deadline imposed"
+    conflict: "Public panic"
+    stakes: "Innocent may suffer"
+    callbacks: ["B3"]
+  - id: B5
+    label: "False Solve"
+    goal: "Confront suspect"
+    conflict: "Alibi holds"
+    stakes: "Humiliation or pivot"
+    callbacks: ["B4"]
+  - id: B6
+    label: "Mirror Beat"
+    goal: "Re-map clues"
+    conflict: "Bias revealed"
+    stakes: "Lose case vs. learn"
+    callbacks: ["B2","B5"]
+  - id: B7
+    label: "Finale"
+    goal: "Reveal true pattern"
+    conflict: "Culprit resists"
+    stakes: "Justice or cover-up"
+    callbacks: ["B1","B6"]
+arcs:
+  - character: "Watson"
+    start_trait: "Skeptical observer"
+    end_trait: "Trusting partner"
+    pivot_beats: ["B5","B7"]

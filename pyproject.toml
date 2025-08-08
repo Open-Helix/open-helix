@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "open-helix"
+version = "0.2.1"
+description = "NBML (Narrative Beat Markup Language) + HELIX-VAL validator"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [{name = "Kevin Maistros", email = "kevin.maistros@colorgrade.pictures"}]
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
+
+[project.scripts]
+helix-val = "tooling.helix_val:main"

@@ -1,0 +1,58 @@
+version: NBML-0.2
+work_id: "OMU-Dracula-EP01"
+logline: "A rational lawyer confronts an irrational predator and becomes a believer."
+genre: "Gothic Horror"
+beats:
+  - id: B1
+    label: "Ignition"
+    goal: "Harker accepts a foreign client"
+    conflict: "Warnings ignored; uneasy signs"
+    stakes: "Career vs credibility"
+    callbacks: []
+  - id: B2
+    label: "Threshold"
+    goal: "Enter the castle"
+    conflict: "Gates locked at night"
+    stakes: "Isolation, rising danger"
+    callbacks: ["B1"]
+  - id: B3
+    label: "First Mask Off"
+    goal: "Explore forbidden wing"
+    conflict: "No mirrors; predatory host"
+    stakes: "Loss of autonomy"
+    callbacks: ["B2"]
+  - id: B4
+    label: "Escape Attempt"
+    goal: "Signal outside world"
+    conflict: "Servants intercept letters"
+    stakes: "Exposure or punishment"
+    callbacks: ["B3"]
+  - id: B5
+    label: "Predation Spreads"
+    goal: "Return to England"
+    conflict: "Contagion aboard ship"
+    stakes: "Victims mount, or else authorities panic"
+    callbacks: ["B1","B3"]
+  - id: B6
+    label: "Circle the Threat"
+    goal: "Van Helsing diagnoses"
+    conflict: "Skeptics deny the supernatural"
+    stakes: "Patient dies if delay continues"
+    callbacks: ["B5"]
+  - id: B7
+    label: "Price of Belief"
+    goal: "Commit to hunt"
+    conflict: "Social costs; moral lines"
+    stakes: "Lose reputation or lose lives"
+    callbacks: ["B6"]
+  - id: B8
+    label: "Finale"
+    goal: "Confront the predator"
+    conflict: "Time running out at dusk"
+    stakes: "Mina's soul or irreversible night"
+    callbacks: ["B1","B7"]
+arcs:
+  - character: "Mina"
+    start_trait: "Pragmatic skeptic"
+    end_trait: "Strategic believer"
+    pivot_beats: ["B6","B7"]

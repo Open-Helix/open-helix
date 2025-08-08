@@ -1,0 +1,52 @@
+version: NBML-0.2
+work_id: "OMU-Alice-EP01"
+logline: "A curious girl falls into a logic-bending world and learns to navigate paradox."
+genre: "Fantasy"
+beats:
+  - id: B1
+    label: "Ignition"
+    goal: "Follow the White Rabbit"
+    conflict: "Impossible descent"
+    stakes: "Lose way home"
+    callbacks: []
+  - id: B2
+    label: "Shrinking Door"
+    goal: "Fit through the door"
+    conflict: "Size-changing potions"
+    stakes: "Trapped or lost"
+    callbacks: ["B1"]
+  - id: B3
+    label: "Rules Don’t Hold"
+    goal: "Understand Wonderland logic"
+    conflict: "Contradictory laws"
+    stakes: "Identity unraveling"
+    callbacks: ["B2"]
+  - id: B4
+    label: "Allies & Tests"
+    goal: "Seek guidance"
+    conflict: "Mad tea constraints"
+    stakes: "Time loop risk"
+    callbacks: ["B3"]
+  - id: B5
+    label: "Antagonist Appears"
+    goal: "Survive the Queen"
+    conflict: "Arbitrary justice"
+    stakes: "Off with her head"
+    callbacks: ["B4"]
+  - id: B6
+    label: "Agency Choice"
+    goal: "Defy nonsense"
+    conflict: "Crowd turns"
+    stakes: "Lose self or wake up"
+    callbacks: ["B5"]
+  - id: B7
+    label: "Finale"
+    goal: "Reclaim self"
+    conflict: "Collapse of logic"
+    stakes: "Stay lost forever or wake"
+    callbacks: ["B1","B6"]
+arcs:
+  - character: "Alice"
+    start_trait: "Impressionable"
+    end_trait: "Self-directed"
+    pivot_beats: ["B3","B6"]

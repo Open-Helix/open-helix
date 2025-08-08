@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use OPEN HELIX, please cite this record."
+title: "OPEN HELIX: NBML v0.2.1, HELIX-VAL, and NVE registry"
+authors:
+  - family-names: "Maistros"
+    given-names: "Kevin"
+    affiliation: "Colorgrade Pictures"
+    email: "kevin.maistros@colorgrade.pictures"
+version: "0.2.1"
+date-released: "2025-08-08"
+url: "https://github.com/Open-Helix/open-helix"

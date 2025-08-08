@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-
 """
 helix_val.py — NBML validator (v0.2 reference)
-Usage:
-  helix-val validate path/to/file.yaml [--json]
-  helix-val score path/to/file.json [--json]
+
+Usage (locally):
+  python tooling/helix_val.py validate path/to/file.yaml --json
+  python tooling/helix_val.py score path/to/file.json --json
 """
-import argparse, json, sys, os
+import argparse, json, os
 
 def _maybe_import_yaml():
     try:
@@ -32,7 +32,7 @@ def load_nbml(path: str):
 def check_structure(doc):
     version = doc.get("version")
     if version not in ("NBML-0.2", "NBML-0.1"):
-        return False, [f"version must be 'NBML-0.2' (or 'NBML-0.1' for backward compat), got {version!r}"], [], 0.0
+        return False, [f"version must be 'NBML-0.2' (or 'NBML-0.1' for compatibility), got {version!r}"], [], 0.0
     beats = doc.get("beats", [])
     errors, warnings = [], []
     if not isinstance(beats, list) or not beats:
@@ -154,8 +154,8 @@ def main():
             r = res[name]; status = "OK " if r["ok"] else "WARN"
             print(f"{status:<4} {name:<18} {r['score']:>5}")
         if res["errors"]:
-            print("\\nErrors:"); [print(f" - {e}") for e in res["errors"]]
+            print("\nErrors:"); [print(f" - {e}") for e in res["errors"]]
         if res["warnings"]:
-            print("\\nWarnings:"); [print(f" - {w}") for w in res["warnings"]]
+            print("\nWarnings:"); [print(f" - {w}") for w in res["warnings"]]
 if __name__ == "__main__":
     main()

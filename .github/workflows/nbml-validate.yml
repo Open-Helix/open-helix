@@ -56,7 +56,7 @@ jobs:
                   for dp,_,fs in os.walk(base):
                       for fn in fs:
                           low = fn.lower()
-                          if "nbml" in low and low.endswith((".yaml",".yml",".json")):
+                          if low.endswith((".nbml.yaml", ".nbml.yml", ".nbml.json")):
                               yield os.path.join(dp, fn)
 
           found = False

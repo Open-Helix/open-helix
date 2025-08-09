@@ -51,9 +51,10 @@ So: NBML is a brand new “missing piece” that most AI/creative devs will not 
 - Join the NBML 1.0 Working Group
 - Submit to the 48-Hour Fix-My-Plot Clinic and see your story repaired in NBML.
 
-Maintainer: Kevin Maistros · Colorgrade Pictures
-📧 kevin.maistros@colorgrade.pictures
-🌐 http://colorgrade.pictures
+**Maintainer:**
+- Kevin Maistros · Colorgrade Pictures
+- 📧 kevin.maistros@colorgrade.pictures
+- 🌐 http://colorgrade.pictures
 - Repo: https://github.com/Open-Helix/open-helix
 
 ## Contents
